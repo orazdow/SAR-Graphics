@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cstdio>
+#include <chrono>
+#include <thread>
 
 #define gl_err(str) glfw_err(0, (str));
 
@@ -12,8 +14,19 @@ void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void keyCB(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+using sysclock = std::chrono::steady_clock;
+using time_point = sysclock::time_point;
+using microseconds = std::chrono::microseconds;
+#define duration_ms(t) std::chrono::duration_cast<microseconds>(t)
+
+extern const float pi;
+extern const float tau;
+extern const float fps;
+extern const float ifps;
+
 GLFWwindow* glfw_init_window(int w, int h, const char* str);
 
+/*
 class GlProg{
 public:
 	GLFWwindow* window;
@@ -27,6 +40,7 @@ public:
 		glfwTerminate();
 	}
 };
+*/
 
 // glfw init
 GLFWwindow* glfw_init_window(int w, int h, const char* str = NULL){

@@ -2,8 +2,6 @@
 #include "scene.h"
 #include <cmath>
 
-const double PI =  acos(-1);
-const double TAU  = 2*PI;
 
 class Duffing : public Scene{
 public:
@@ -19,7 +17,7 @@ public:
 	double px, py;
 	double section = 0.1;
 
-	const double tau = TAU/c;
+	const double ctau = tau/c;
 	static const int POINTS_MAX = 2048;
 	const int maxsteps = 500000;
 	int num = 256;
@@ -74,7 +72,7 @@ public:
         glDrawArrays(GL_POINTS, pos, n);
 
         // pos = (pos+n)%num;
-        section = rotate(section, 0.01);
+        rotate(section, 0.33);
 
 	}	
 
@@ -103,8 +101,8 @@ public:
 	            n++;
 	        }
 
-	        if(c*t >= TAU) 
-	            t -= tau;
+	        if(c*t >= tau) 
+	            t -= ctau;
 
 	        if(n >= drawlen) break;
 	    }
@@ -113,10 +111,9 @@ public:
 
 	}
 
-	double rotate(double n, double rate){
-	    n += rate;
-	    if(n > TAU) n -= TAU;
-	    return n;
+	void rotate(double& n, double rate){
+	    n += rate*tau*ifps;
+	    if(n > tau) n -= tau;
 	}
 
 };

@@ -13,7 +13,7 @@ LIBS += -L D:/Libraries/SOIL/lib
 LIBS += -lSOIL -lglfw3 -lgdi32 -lopengl32 -lpthread 
 
 CXX = g++
-# FLAGS = -Wall
+FLAGS = -std=c++17
 
 OBJ = $(notdir $(patsubst %.c, %.o,  $(SRC)))
 OBJ := $(notdir $(patsubst %.cpp, %.o,  $(OBJ)))

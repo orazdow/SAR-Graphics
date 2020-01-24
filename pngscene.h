@@ -4,17 +4,15 @@
 #include "texloader.h"
 #include <cmath>
 
-const float tau = 6.2831853;
-const float itau = 1.0/tau;
 
 struct Sig{
-    float freq;
-    float phase;
-    float out;
+    float freq = 0;
+    float phase = 0;
+    float out = 0;
 };
 
 void inc_sin(Sig* osc, float dt){
-    osc->phase += dt;
+    osc->phase += dt*tau*ifps;
 
     if(osc->phase >= tau)
         osc->phase -= tau;
@@ -23,7 +21,7 @@ void inc_sin(Sig* osc, float dt){
 }
 
 void inc_tri(Sig* osc, float dt){
-    osc->phase += dt*itau;
+    osc->phase += dt*ifps;
     if(osc->phase >= 1){ osc->phase -= 1;}
     if(osc->phase < 0){ osc->phase += 1;}
    
@@ -99,7 +97,7 @@ public:
 		glBindVertexArray(VAO);
 		texShader->use();
 
-        inc_tri(&sig, 0.005);
+        inc_sin(&sig, 0.2);
         texShader->setUniform(usig, &sig.out, 0);
         
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

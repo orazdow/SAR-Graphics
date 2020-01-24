@@ -14,9 +14,10 @@
 #include <cstdio>
 #include <stdint.h>
 
-#ifndef max
-#define max(a, b) (a > b ? a : b)
+#ifndef _max
+#define _max(a, b) (a > b ? a : b)
 #endif
+
 typedef uint32_t uint;
 
 uint32_t swap4(uint32_t num){
@@ -69,7 +70,7 @@ public:
 		pngs.erase(std::remove_if(
 			pngs.begin(), 
 			pngs.end(), 
-			[](std::string s){return s.substr(max((int)(s.size())-4, 0)) != ".png";}), 
+			[](std::string s){return s.substr(_max((int)(s.size())-4, 0)) != ".png";}), 
 			pngs.end());
 
 		int n = pngs.size();
@@ -79,8 +80,8 @@ public:
 		for(int i = 0; i < n; i++){
 			path = (resourcepath + "/")+pngs[i];
 			scan_png(path.c_str(), &size, &width, &height);
-			maxW = max(maxW, width);
-			maxH = max(maxH, height);
+			maxW = _max(maxW, width);
+			maxH = _max(maxH, height);
 			std::cout << path << " w: " << width << " h: " << height << "\n";
 		}
 
