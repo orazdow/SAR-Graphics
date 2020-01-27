@@ -1,5 +1,5 @@
 #pragma once
-#include "scene.h"
+#include "../scene.h"
 #include <cmath>
 
 
@@ -72,7 +72,7 @@ public:
         glDrawArrays(GL_POINTS, pos, n);
 
         // pos = (pos+n)%num;
-        rotate(section, 0.33);
+        rotate(section, 0.4);
 
 	}	
 

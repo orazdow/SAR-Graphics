@@ -1,6 +1,6 @@
 #include "gl_prog.h"
-#include "duffing.h"
-#include "pngscene.h"
+#include "scenes/duffing.h"
+#include "scenes/pngscene.h"
 
 #define ww 800
 #define wh 600
@@ -15,7 +15,7 @@ int main(){
 
     GLFWwindow* window = glfw_init_window(ww, wh);
 
-    PngScene pngscene(ww, wh, "shaders/test.vs", "shaders/test.fs", "resources");
+    PngScene pngscene(ww, wh, "shaders/tex.vs", "shaders/tex.fs", "resources");
     Duffing duffing(ww, wh, "shaders/duffpoints.vs", "shaders/duffpoints.fs", 200);
 
     glEnable(GL_BLEND);

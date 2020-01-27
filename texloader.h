@@ -4,8 +4,6 @@
 #include <GLFW/glfw3.h>
 #include "soil.h"
 
-#include <sys/types.h>
-#include <dirent.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -24,15 +22,37 @@ uint32_t swap4(uint32_t num){
     return ((num>>24)&0xff) | ((num<<8)&0xff0000) | ((num>>8)&0xff00) | ((num<<24)&0xff000000);
 }
 
-static void read_directory(const char* name, std::vector<std::string>& v)
-{
-    DIR* dirp = opendir(name);
-    struct dirent * dp;
-    while ((dp = readdir(dirp)) != NULL) {
-        v.push_back(dp->d_name);
-    }
-    closedir(dirp);
-}
+#ifdef OS_W32
+	#include "windows.h"
+
+	static void read_directory(const char* name, std::vector<std::string>& v)
+	{
+	    WIN32_FIND_DATA data;
+	    std::string str(name);
+	    str+="\\*";
+	    HANDLE hFind = FindFirstFile(str.c_str(), &data); 
+
+	    if ( hFind != INVALID_HANDLE_VALUE ) {
+	        do {
+	            v.push_back(data.cFileName);
+	        } while (FindNextFile(hFind, &data));
+	        FindClose(hFind);
+	    }
+	}
+#else
+	#include <sys/types.h>
+	#include <dirent.h>
+
+	static void read_directory(const char* name, std::vector<std::string>& v)
+	{
+	    DIR* dirp = opendir(name);
+	    struct dirent * dp;
+	    while ((dp = readdir(dirp)) != NULL) {
+	        v.push_back(dp->d_name);
+	    }
+	    closedir(dirp);
+	}
+#endif
 
 static void scan_png(const char* path, uint* size, uint* w, uint* h){
 	FILE* f = fopen(path, "rb");

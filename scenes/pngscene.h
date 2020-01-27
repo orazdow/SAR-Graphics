@@ -1,7 +1,6 @@
 #pragma once
-#include "scene.h"
-#include "soil.h"
-#include "texloader.h"
+#include "../scene.h"
+#include "../texloader.h"
 #include <cmath>
 
 
@@ -22,11 +21,38 @@ void inc_sin(Sig* osc, float dt){
 
 void inc_tri(Sig* osc, float dt){
     osc->phase += dt*ifps;
-    if(osc->phase >= 1){ osc->phase -= 1;}
-    if(osc->phase < 0){ osc->phase += 1;}
-   
+    if(osc->phase >= 1){ osc->phase -= 1;} 
     osc->out = fabs(osc->phase - 0.5)*2;
 }
+
+void inc_tri_int(Sig* osc, float dt, int* _int, int max){
+	osc->phase += dt*ifps;
+    if(osc->phase >= 1){ 
+    	osc->phase -= 1; 
+    	*_int = (*_int+1)%max;
+    }
+    if(osc->phase <= 0.5){ 
+    	osc->out = osc->phase*2;
+    }else{
+    	osc->out = (1.0 - osc->phase)*2;
+    }  
+}
+
+void inc_ramp(Sig* osc, float dt){
+	osc->phase += dt*ifps;
+	if(osc->phase >= 1){ osc->phase -= 1;}
+	osc->out = osc->phase;
+}
+
+void inc_ramp_int(Sig* osc, float dt, int* _int, int max){
+	osc->phase += dt*ifps;
+	if(osc->phase >= 1){
+		osc->phase -= 1;
+		*_int = (*_int+1)%max;
+	}
+	osc->out = osc->phase;	
+}
+
 
 class PngScene : public Scene{
 public:
@@ -35,15 +61,16 @@ public:
 	TextureLoader* texLoader;
 	const char* pngdir;
 	int usig;
+	int uidx, idx = 0;
 	Sig sig;
 
    // rectangle strip rect
     float vertices[16] = {
         //vertex     texture
-        -0.8, -0.8,  0, 1,
-        -0.8,  0.8,  0, 0,
-         0.8, -0.8,  1, 1,
-         0.8,  0.8,  1, 0
+        -0.8f, -0.8f,  0.0f, 1.0f,
+        -0.8f,  0.8f,  0.0f, 0.0f,
+         0.8f, -0.8f,  1.0f, 1.0f,
+         0.8f,  0.8f,  1.0f, 0.0f
     };
 
 	PngScene(int w, int h, const char* v, const char* f, const char* dir): Scene(w, h, v, f), pngdir(dir){
@@ -88,7 +115,9 @@ public:
 
     	texLoader = new TextureLoader(W, H, texShader->program);
     	texLoader->loadPngDirArray(pngdir, "mysampler");
+    	
     	usig = texShader->makeUniform("mixsig");
+    	uidx = texShader->makeUniform("idx");
 	}
 
 
@@ -97,9 +126,11 @@ public:
 		glBindVertexArray(VAO);
 		texShader->use();
 
-        inc_sin(&sig, 0.2);
-        texShader->setUniform(usig, &sig.out, 0);
-        
+        // inc_sin(&sig, 0.2);
+		inc_ramp_int(&sig , 0.5, &idx, 5);
+        texShader->setUniform(uidx, &idx, Shader::UNIFORM_INT);
+   		texShader->setUniform(usig, &sig.out, 0);  
+
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	}	

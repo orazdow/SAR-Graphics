@@ -1,3 +1,7 @@
-first
+/build
 *.o
+*.obj
 *.exe
+.vs
+*.pdb
+*.ilk
